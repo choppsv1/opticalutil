@@ -117,8 +117,9 @@ def wavelen_to_frequency (wavelen):
     #    GHz        MHz       KHz         Hz
     c = D(299792458) # meters per second
     freq = c / D(wavelen)
-    freq = freq / 100
-    freq = freq.quantize(D('1.')) * 100
+    # freq = freq / D('12.5')
+    # freq = freq.quantize(D('1.')) * D('12.5')
+    freq = freq.quantize(D('1.'))
     return int(freq)
 
 
