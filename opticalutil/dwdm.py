@@ -119,8 +119,9 @@ def wavelen_to_frequency (wavelen):
     freq = c / D(wavelen)
     # freq = freq / D('12.5')
     # freq = freq.quantize(D('1.')) * D('12.5')
-    freq = freq.quantize(D('1.'))
-    return int(freq)
+    freq = int(freq)
+    freq = ((freq + 9) // 10) * 10
+    return freq
 
 
 def frequency_to_wavelen (freq):
