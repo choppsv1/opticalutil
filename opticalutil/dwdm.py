@@ -51,7 +51,7 @@ def channel_huawei_to_itu (huawei):
 
 
 def frequency_to_alu_channel (freq):
-    """ Convert frequency in GHz to DWDM channel in C-band
+    """ Convert frequency in GHz to ALU DWDM channel in C-band
 
     >>> frequency_to_alu_channel(190100)
     1.0
@@ -64,7 +64,7 @@ def frequency_to_alu_channel (freq):
 
 
 def frequency_to_channel (freq):
-    """ Convert frequency in GHz to DWDM channel in C-band
+    """ Convert frequency in GHz to ITU DWDM channel in C-band
 
     >>> frequency_to_channel(193100)
     0
@@ -81,7 +81,7 @@ def frequency_to_channel (freq):
 
 
 def alu_channel_to_frequency (channel):
-    """ Convert frequency in GHz to DWDM channel in C-band
+    """ Convert frequency in GHz to ALU DWDM channel in C-band
 
     >>> alu_channel_to_frequency(1)
     190100
@@ -94,7 +94,7 @@ def alu_channel_to_frequency (channel):
 
 
 def channel_to_frequency (itu_channel):
-    """ Convert frequency in GHz to DWDM channel in C-band
+    """ Convert frequency in GHz to ITU DWDM channel in C-band
 
     >>> channel_to_frequency(0)
     193100
@@ -109,19 +109,33 @@ def channel_to_frequency (itu_channel):
 
 
 def wavelen_to_frequency (wavelen):
-    """Convert a frequency to a wavelength
+    """Convert a wavelength to a frequency
     >>> wavelen_to_frequency(1577.03)
     190100
+    >>> wavelen_to_frequency(1561.42)
+    192000
+    >>> wavelen_to_frequency(1549.32)
+    193500
+    >>> wavelen_to_frequency(1548.91)
+    193550
+    >>> wavelen_to_frequency(1548.71)
+    193575
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
     c = D(299792458) # meters per second
     freq = c / D(wavelen)
-    # freq = freq / D('12.5')
-    # freq = freq.quantize(D('1.')) * D('12.5')
-    freq = int(freq)
-    freq = ((freq + 9) // 10) * 10
-    return freq
+    # Old way that works, but is 100 we want more precise
+    # freq = freq / 100
+    # freq = freq.quantize(D('1.')) * 100
+    # This may be a better way to support 25, 50, 100 stepping
+    # freq = int(freq)
+    # freq = ((freq + 4) // 5) * 5
+    # return freq
+    # This way however gives the best result for 12.5, 25., 50, or 100 stepping
+    freq = freq / D('12.5')
+    freq = freq.quantize(D('1.')) * D('12.5')
+    return int(freq)
 
 
 def frequency_to_wavelen (freq):
@@ -132,6 +146,10 @@ def frequency_to_wavelen (freq):
     1561.42
     >>> frequency_to_wavelen(193500)
     1549.32
+    >>> frequency_to_wavelen(193550)
+    1548.91
+    >>> frequency_to_wavelen(193575)
+    1548.71
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
@@ -146,13 +164,17 @@ def frequency_to_wavelen (freq):
 
 
 def frequency_to_wavelen_precise (freq):
-    """Convert a frequency to a wavelength
-    >>> frequency_to_wavelen(190100)
-    1577.03
-    >>> frequency_to_wavelen(192000)
-    1561.42
-    >>> frequency_to_wavelen(193500)
-    1549.32
+    """Convert a frequency to a wavelength with no rounding
+    >>> frequency_to_wavelen_precise(190100)
+    1577.025
+    >>> frequency_to_wavelen_precise(192000)
+    1561.4191
+    >>> frequency_to_wavelen_precise(193500)
+    1549.315
+    >>> frequency_to_wavelen_precise(193100)
+    1552.5244
+    >>> frequency_to_wavelen_precise(193025)
+    1553.1276
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
@@ -165,7 +187,7 @@ def frequency_to_wavelen_precise (freq):
 
 
 def wavelen_to_alu_channel (wavelen):
-    """Convert a wavelen (nm) to channel
+    """Convert a wavelen (nm) to ALU channel
     >>> wavelen_to_alu_channel(1570.42)
     9.0
     >>> wavelen_to_alu_channel(1528.77)
@@ -179,7 +201,7 @@ def wavelen_to_channel (wavelen):
 
 
 def alu_channel_to_wavelen (channel):
-    """Convert a channel to wavelen (nm)
+    """Convert an ALU channel to wavelen (nm)
     >>> alu_channel_to_wavelen(1)
     1577.03
     >>> alu_channel_to_wavelen(48)
