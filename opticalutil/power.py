@@ -211,8 +211,12 @@ class Power (object):
         Decimal('1.258925')
         >>> Power(0).mwatt()
         Decimal('1.000000')
+        >>> Power(None).mwatt()
+        0
+        >>> Power('None').mwatt()
+        0
         """
-        if dBm is None:
+        if dBm is None or dBm == "None":
             self.dBm = None
         else:
             try:
