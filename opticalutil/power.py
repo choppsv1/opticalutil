@@ -291,17 +291,25 @@ class Power (object):
         False
         >>> Power(None) == Power(None)
         True
+        >>> Power(None) >= Power(-50)
+        False
+        >>> Power(None) < Power(-50)
+        True
+        >>> Power(None) <= Power(-50)
+        True
         """
+        mwatt = self.mwatt()
         try:
-            return self.dBm < other.dBm
+            return mwatt < other.mwatt()
         except AttributeError:
-            return self.dBm < D(other)
+            return mwatt < Power(D(other)).mwatt()
 
     def __eq__ (self, other):
+        mwatt = self.mwatt()
         try:
-            return self.dBm == other.dBm
+            return mwatt == other.mwatt()
         except AttributeError:
-            return self.dBm == D(other)
+            return mwatt == Power(D(other)).mwatt()
 
     def __mult__ (self, multiplier):
         return Power.from_mwatt(self.mwatt() * multiplier)
