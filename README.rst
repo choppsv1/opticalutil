@@ -2,6 +2,7 @@
 opticalutil
 ===========
 
+Support classes for handling optical power.
 
 master branch status:
 

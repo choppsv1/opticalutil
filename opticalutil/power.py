@@ -193,7 +193,12 @@ class Power (object):
             return Power(None)
         if not mwatt:
             return Power(None)
-        # Should we do this?
+        try:
+            # Try and convert to float first to catch '0.00' case
+            if not float(mwatt):
+                return Power(None)
+        except ValueError:
+            pass
 
         dBm = D(10, pcontext) * D(mwatt).log10(pcontext)
         dBm = dBm.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
