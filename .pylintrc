@@ -11,7 +11,8 @@
 #init-hook=
 
 # Profiled execution.
-profile=no
+# Removed in pylint 1.6
+# profile=no
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.

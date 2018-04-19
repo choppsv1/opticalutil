@@ -13,19 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 from setuptools import setup
 
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
-setup (name='opticalutil',
-       version='0.1.5',
-       description='opticalutil',
-       long_description=read("README.rst"),
-       author='Christian E. Hopps',
-       author_email='chopps@gmail.com',
-       license='Apache License, Version 2.0',
-       url='https://github.com/choppsv1/opticalutil',
-       packages=['opticalutil'])
+setup(
+    setup_requires=['pbr>=1.8'],
+    pbr=True)

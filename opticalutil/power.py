@@ -83,7 +83,7 @@ class Decibal (Decimal):
     def __float__ (self):
         return float(self.dB)
 
-    def __str__ (self):                                     # pylint: disable=W0221
+    def __str__ (self, eng=False, context=None):
         """
         >>> str(Decibal(0))
         '0.00dB'
@@ -97,10 +97,19 @@ class Decibal (Decimal):
         else:
             return "{:.2f}dB".format(self.dB)
 
-    def __neg__ (self):                                     # pylint: disable=W0221
-        return Decibal(-self.dB)
+    def __neg__ (self, context=None):
+        """
+        >>> str(-Decibal(1))
+        '-1dB'
+        >>> str(-Decibal(-1))
+        '1dB'
+        """
+        if self.dB is None:
+            return Decibal(None, context)
+        return Decibal(self.dB.__neg__(context), context)
 
-    def __mul__ (self, other):                              # pylint: disable=W0221
+    def __mul__ (self, other, context=None):
+        # Does this handle none cases?
         return Decibal(self.dB * other)
     __rmul__ = __mul__
 
