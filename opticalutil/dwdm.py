@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-#
+# -*- coding: utf-8 eval: (yapf-mode 1) -*-
 #
 # April 2 2015, Christian Hopps <chopps@gmail.com>
 #
@@ -22,35 +22,35 @@ from __future__ import absolute_import, division, unicode_literals, print_functi
 from decimal import Decimal as D
 
 
-def channel_itu_to_alu (itu):
+def channel_itu_to_alu(itu):
     return itu / 2.0 + 31
 
 
-def channel_alu_to_itu (alu):
+def channel_alu_to_itu(alu):
     return int((alu - 31) * 2)
 
 
-def channel_itu_to_cisco (itu):
+def channel_itu_to_cisco(itu):
     cisco = -1 * itu + 61
     return int(cisco)
 
 
-def channel_cisco_to_itu (cisco):
+def channel_cisco_to_itu(cisco):
     itu = -(cisco - 61)
     return int(itu)
 
 
-def channel_itu_to_huawei (itu):
+def channel_itu_to_huawei(itu):
     huawei = -1 * itu + 60
     return int(huawei)
 
 
-def channel_huawei_to_itu (huawei):
+def channel_huawei_to_itu(huawei):
     itu = -(huawei - 60)
     return int(itu)
 
 
-def frequency_to_alu_channel (freq):
+def frequency_to_alu_channel(freq):
     """ Convert frequency in GHz to ALU DWDM channel in C-band
 
     >>> frequency_to_alu_channel(190100)
@@ -63,7 +63,7 @@ def frequency_to_alu_channel (freq):
     return channel_itu_to_alu(frequency_to_channel(freq))
 
 
-def frequency_to_channel (freq):
+def frequency_to_channel(freq):
     """ Convert frequency in GHz to ITU DWDM channel in C-band
 
     >>> frequency_to_channel(193100)
@@ -80,7 +80,7 @@ def frequency_to_channel (freq):
     return int(itu_channel)
 
 
-def alu_channel_to_frequency (channel):
+def alu_channel_to_frequency(channel):
     """ Convert frequency in GHz to ALU DWDM channel in C-band
 
     >>> alu_channel_to_frequency(1)
@@ -93,7 +93,7 @@ def alu_channel_to_frequency (channel):
     return channel_to_frequency(channel_alu_to_itu(channel))
 
 
-def channel_to_frequency (itu_channel):
+def channel_to_frequency(itu_channel):
     """ Convert frequency in GHz to ITU DWDM channel in C-band
 
     >>> channel_to_frequency(0)
@@ -108,7 +108,7 @@ def channel_to_frequency (itu_channel):
     return int(193100 + 50 * itu_channel)
 
 
-def wavelen_to_frequency (wavelen):
+def wavelen_to_frequency(wavelen):
     """Convert a wavelength to a frequency
     >>> wavelen_to_frequency(1577.03)
     190100
@@ -123,7 +123,7 @@ def wavelen_to_frequency (wavelen):
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
-    c = D(299792458) # meters per second
+    c = D(299792458)  # meters per second
     freq = c / D(wavelen)
     # Old way that works, but is 100 we want more precise
     # freq = freq / 100
@@ -138,7 +138,7 @@ def wavelen_to_frequency (wavelen):
     return int(freq)
 
 
-def frequency_to_wavelen (freq):
+def frequency_to_wavelen(freq):
     """Convert a frequency to a wavelength
     >>> frequency_to_wavelen(190100)
     1577.03
@@ -153,17 +153,17 @@ def frequency_to_wavelen (freq):
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
-    hz = D(freq) # * D(1000) * D(1000) * D(1000)
-    c = D(299792458) # meters per second
+    hz = D(freq)  # * D(1000) * D(1000) * D(1000)
+    c = D(299792458)  # meters per second
     l = c / hz
     #         milli     micro     nano
-    l = l # * (D(1000) * D(1000) * D(1000))
+    l = l  # * (D(1000) * D(1000) * D(1000))
     return float(l.quantize(D('.01')))
 
     # n=c/l
 
 
-def frequency_to_wavelen_precise (freq):
+def frequency_to_wavelen_precise(freq):
     """Convert a frequency to a wavelength with no rounding
     >>> frequency_to_wavelen_precise(190100)
     1577.025
@@ -178,15 +178,15 @@ def frequency_to_wavelen_precise (freq):
     """
     # l=c/n
     #    GHz        MHz       KHz         Hz
-    hz = D(freq) # * D(1000) * D(1000) * D(1000)
-    c = D(299792458) # meters per second
+    hz = D(freq)  # * D(1000) * D(1000) * D(1000)
+    c = D(299792458)  # meters per second
     l = c / hz
     #         milli     micro     nano
-    l = l # * (D(1000) * D(1000) * D(1000))
+    l = l  # * (D(1000) * D(1000) * D(1000))
     return float(l.quantize(D('.0001')))
 
 
-def wavelen_to_alu_channel (wavelen):
+def wavelen_to_alu_channel(wavelen):
     """Convert a wavelen (nm) to ALU channel
     >>> wavelen_to_alu_channel(1570.42)
     9.0
@@ -196,11 +196,11 @@ def wavelen_to_alu_channel (wavelen):
     return channel_itu_to_alu(wavelen_to_channel(wavelen))
 
 
-def wavelen_to_channel (wavelen):
+def wavelen_to_channel(wavelen):
     return frequency_to_channel(wavelen_to_frequency(wavelen))
 
 
-def alu_channel_to_wavelen (channel):
+def alu_channel_to_wavelen(channel):
     """Convert an ALU channel to wavelen (nm)
     >>> alu_channel_to_wavelen(1)
     1577.03
@@ -212,7 +212,7 @@ def alu_channel_to_wavelen (channel):
     return channel_to_wavelen(channel_alu_to_itu(channel))
 
 
-def channel_to_wavelen (channel):
+def channel_to_wavelen(channel):
     return frequency_to_wavelen(channel_to_frequency(channel))
 
 
