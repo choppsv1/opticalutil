@@ -1,15 +1,19 @@
 language: python
-
-env:
-  - TOXENV=py27
-  - TOXENV=py33
-  - TOXENV=py34
-  - TOXENV=pypy
-
+python:
+  - '2.7'
+  - '3.5'
+  - '3.6'
 install:
-  - pip install tox
-  - pip install coveralls
-  - pip install nose
-
+  - pip install coveralls pytest
 script:
-  - tox -e $TOXENV
+  - coverage run -m pytest
+deploy:
+  provider: pypi
+  user: choppsv1
+  password:
+    secure: C9SasWTbOMzsFnNGesjSqHc7urfAKeX8SCIepwVJ3uZqEFoo4JubUkJ8nkyKJ3s20XRNSA+YbdRv5/WDUPdin5xxc4YDZpkyRNEUleQPdAfmTewWgh+9fIxIV3noTBAVgxCxH54bQ0YOvV0GFlgCpmn9PHb6ziDXtsdZWLeLrZyKy88fzcb9HZNemCmcNy8EmKFetkmYVdQCpAlZAxKGIJCNhhTQelH3eZFhFr+D4HrQBbVdll0TjOKa3IxcXhZwBuRivh+WV6AcnhfmbnF6hZc6Z7eCjrBtx5CnzcRxn6NxwS9Le3vDF9DZzCqS8gqx8SkucCVPCXLCLwCQo5XPA8W3PJznTpZVM9uSS5kALLMS7t3KZ0PU9EzKMn6Ofnf3vxst05TDQYNR733s5l4v6UdYaDEoUZLU7W8oY+o3Uyvoynl7x7J0+NVP0xsZM2pqsLtUAgMZit6MfaGmr90qE5hC+ntFW6TXw4p+t9PzdzR1lkD2eSbXnvb4bDCeCqMQuyx6hSKfrCwWTxGw0ggV18f04YFg2qcatK0lMMu5tiLtQi/kA4SvfJWUjtnbudy9k3I38IZo1IIw0OT2mJcB8KexLK0aPf6/kf8F2fiGEY55hIKX/lNHieH0RKoCDkpX/AnlRrZVwPbjWc6WsW9rciUTUEOk7TI9qkbC4d6Ik34=
+  on:
+    branch: master
+    tags: true
+    condition: $TRAVIS_PYTHON_VERSION = "2.7"
+  distributions: "sdist bdist_wheel"

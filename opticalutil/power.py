@@ -100,9 +100,9 @@ class Decibal(Decimal):
     def __neg__(self, context=None):
         """
         >>> str(-Decibal(1))
-        '-1dB'
+        '-1.00dB'
         >>> str(-Decibal(-1))
-        '1dB'
+        '1.00dB'
         """
         if self.dB is None:
             return Decibal(None, context)
