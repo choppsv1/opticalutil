@@ -86,23 +86,23 @@ class Decibal(Decimal):
     def __str__(self):  # pylint: disable=W0222
         """
         >>> str(Decibal(0))
-        '0.00dB'
+        '0.00'
         >>> str(Decibal(3.141596))
-        '3.14dB'
+        '3.14'
         >>> str(Decibal(-3.999))
-        '-4.00dB'
+        '-4.00'
         """
         if self.dB is None:
             return "*"
         else:
-            return "{:.2f}dB".format(self.dB)
+            return "{:.2f}".format(self.dB)
 
     def __neg__(self):  # pylint: disable=W0222
         """
         >>> str(-Decibal(1))
-        '-1.00dB'
+        '-1.00'
         >>> str(-Decibal(-1))
-        '1.00dB'
+        '1.00'
         """
         if self.dB is None:
             return Decibal(None)
@@ -343,12 +343,12 @@ class Power(object):
     def __str__(self):
         """
         >>> str(Power(0))
-        '0.00dBm'
+        '0.00'
         """
         if self.dBm is None:
             return "*"
         else:
-            return "{:.2f}dBm".format(self.dBm)
+            return "{:.2f}".format(self.dBm)
 
     def __truediv__(self, other):  # pylint: disable=W0221
         return self.__div__(other)
