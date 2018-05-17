@@ -33,7 +33,7 @@ from decimal import Context, Decimal, ROUND_HALF_EVEN
 
 D = Decimal
 PPREC = 6
-SIXPLACES = Decimal(10)**-6
+SIXPLACES = Decimal(10) ** -6
 pcontext = Context(rounding=ROUND_HALF_EVEN, Emin=-10000000, Emax=10000000)
 
 
@@ -44,7 +44,7 @@ def mwatt2db(mwatt):
 
 
 def db2mwatt(db):
-    rv = Decimal(10**(db / 10), pcontext)
+    rv = Decimal(10 ** (db / 10), pcontext)
     rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
     return rv
 
@@ -61,30 +61,40 @@ def combiner(thrupower, tappower, thrupct, firsttap):
     return Power.from_mwatt(wthruout + wtapout)
 
 
-class Decibal(Decimal):
+class Decibel(object):
+    @classmethod
+    def from_factor(cls, gain_factor, context=pcontext):
+        """Create a Decibel object give the gain factor.
+        >>> Decibel.from_factor(1)
+        Decibel('0.000000')
+        >>> Decibel.from_factor(3)
+        Decibel('4.771213')
+        """
+        return cls(mwatt2db(gain_factor))
+
     @classmethod
     def from_10ths_db(cls, inval):
         """
-        >>> dB = Decibal.from_10ths_db(22)
+        >>> dB = Decibel.from_10ths_db(22)
         >>> str(dB)
         '2.20'
-        >>> dB = Decibal.from_10ths_db(None)
+        >>> dB = Decibel.from_10ths_db(None)
         >>> str(dB)
         '*'
         """
         if inval is None:
             dB = None
         else:
-            dB = Decibal(inval) / D(10)
+            dB = Decibel(inval).dB / D(10)
         return cls(dB)
 
     @classmethod
     def from_100ths_db(cls, inval):
         """
-        >>> dB = Decibal.from_100ths_db(202)
+        >>> dB = Decibel.from_100ths_db(202)
         >>> str(dB)
         '2.02'
-        >>> dB = Decibal.from_10ths_db(None)
+        >>> dB = Decibel.from_10ths_db(None)
         >>> str(dB)
         '*'
         """
@@ -94,36 +104,31 @@ class Decibal(Decimal):
             dB = D(inval) / D(100)
         return cls(dB)
 
-    def __new__(cls, dB, context=pcontext):  # pylint: disable=W0222
+    def __init__(self, dB):
         if dB is None:
-            dB = None
-            obj = Decimal.__new__(cls, 0, context)
+            self.dB = None
         else:
             try:
-                if dB.endswith('dB'):
-                    dB = dB.replace('dB', '')
+                dB = dB.replace('dB', '')
             except AttributeError:
                 pass
-            dB = Decimal(dB, context).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
-            obj = Decimal.__new__(cls, dB, context)
-        obj.dB = dB
-        return obj
+            self.dB = Decimal(dB).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
 
     def __repr__(self):
-        return "Decibal('{}')".format(self.dB)
+        return "Decibel('{}')".format(self.dB)
 
     def __float__(self):
         return float(self.dB)
 
     def __str__(self):  # pylint: disable=W0222
         """
-        >>> str(Decibal(0))
+        >>> str(Decibel(0))
         '0.00'
-        >>> str(Decibal(3.141596))
+        >>> str(Decibel(3.141596))
         '3.14'
-        >>> str(Decibal(-3.999))
+        >>> str(Decibel(-3.999))
         '-4.00'
-        >>> str(Decibal(None))
+        >>> str(Decibel(None))
         '*'
         """
         if self.dB is None:
@@ -133,28 +138,27 @@ class Decibal(Decimal):
 
     def __neg__(self):  # pylint: disable=W0222
         """
-        >>> str(-Decibal(1))
+        >>> str(-Decibel(1))
         '-1.00'
-        >>> str(-Decibal(-1))
+        >>> str(-Decibel(-1))
         '1.00'
         """
         if self.dB is None:
-            return Decibal(None)
-        return Decibal(self.dB.__neg__())
+            return Decibel(None)
+        return Decibel(self.dB.__neg__())
 
     def __mul__(self, other):  # pylint: disable=W0222
-        # Does this handle none cases?
-        if self.dB is None:
-            return Decibal(None)
-        return Decibal(self.dB * other)
+        if self.dB is None or other is None or other.dB is None:
+            return Decibel(None)
+        return Decibel(self.dB * other)
 
     __rmul__ = __mul__
 
     def gain_factor(self):
         """Convert gain value to mwatt for multiplying
-        >>> Decibal(0).gain_factor()
+        >>> Decibel(0).gain_factor()
         Decimal('1.000000')
-        >>> Decibal(13).gain_factor()
+        >>> Decibel(13).gain_factor()
         Decimal('19.952623')
         """
         #
@@ -162,7 +166,7 @@ class Decibal(Decimal):
         # 10 ^ (x dB / 10) = 10^(log10(multiplier))
         # 10 ^ (x dB / 10) = multiplier
         #
-        rv = Decimal(10**(self.dB / 10), pcontext)
+        rv = Decimal(10 ** (self.dB / 10), pcontext)
         rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
         return rv
 
@@ -189,7 +193,7 @@ class Decibal(Decimal):
         """Calculate OSNR for .1nm signal
 
         >>> Gain(16).osnr(7.9, Power(-20))
-        Decibal('30.170675')
+        Decibel('30.170675')
         """
 
         # Psig = Pin * G
@@ -200,7 +204,8 @@ class Decibal(Decimal):
         return psig - pase
 
 
-Gain = Decibal
+Decibal = Decibel  # Not 100% backward compat -- doesn't derive from Decimal
+Gain = Decibel
 
 
 @total_ordering
@@ -294,7 +299,7 @@ class Power(object):
         if self.dBm is None:
             return 0
         # XXX get context from us not global
-        rv = Decimal(10**(self.dBm / 10), pcontext)
+        rv = Decimal(10 ** (self.dBm / 10), pcontext)
         rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
         return rv
 
@@ -325,9 +330,9 @@ class Power(object):
         >>> Power(0) - Gain(1)
         Power('-1.000000')
         >>> Power(0) - Power(2)
-        Decibal('-2.000000')
+        Decibel('-2.000000')
         >>> Power(3) - Power(0)
-        Decibal('3.000000')
+        Decibel('3.000000')
         """
         try:
             dBm = power_or_gain.dBm
