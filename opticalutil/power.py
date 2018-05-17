@@ -33,7 +33,7 @@ from decimal import Context, Decimal, ROUND_HALF_EVEN
 
 D = Decimal
 PPREC = 6
-SIXPLACES = Decimal(10)**-6
+SIXPLACES = Decimal(10) ** -6
 pcontext = Context(rounding=ROUND_HALF_EVEN, Emin=-10000000, Emax=10000000)
 
 
@@ -44,7 +44,7 @@ def mwatt2db(mwatt):
 
 
 def db2mwatt(db):
-    rv = Decimal(10**(db / 10), pcontext)
+    rv = Decimal(10 ** (db / 10), pcontext)
     rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
     return rv
 
@@ -166,7 +166,7 @@ class Decibel(object):
         # 10 ^ (x dB / 10) = 10^(log10(multiplier))
         # 10 ^ (x dB / 10) = multiplier
         #
-        rv = Decimal(10**(self.dB / 10), pcontext)
+        rv = Decimal(10 ** (self.dB / 10), pcontext)
         rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
         return rv
 
@@ -299,7 +299,7 @@ class Power(object):
         if self.dBm is None:
             return 0
         # XXX get context from us not global
-        rv = Decimal(10**(self.dBm / 10), pcontext)
+        rv = Decimal(10 ** (self.dBm / 10), pcontext)
         rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
         return rv
 
