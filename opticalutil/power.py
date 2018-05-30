@@ -112,7 +112,10 @@ class Decibel(object):
                 dB = dB.replace('dB', '')
             except AttributeError:
                 pass
-            self.dB = Decimal(dB).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
+            if isinstance(dB, Decibel):
+                self.dB = dB.dB
+            else:
+                self.dB = Decimal(dB).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
 
     def __repr__(self):
         return "Decibel('{}')".format(self.dB)
@@ -148,7 +151,13 @@ class Decibel(object):
         return Decibel(self.dB.__neg__())
 
     def __mul__(self, other):  # pylint: disable=W0222
-        if self.dB is None or other is None or other.dB is None:
+        """
+        >>> Decibel(.5) * 20
+        Decibel('10.000000')
+        """
+        if self.dB is None or other is None:
+            return Decibel(None)
+        if hasattr(other, "dB") and other.dB is None:
             return Decibel(None)
         return Decibel(self.dB * other)
 
@@ -293,7 +302,10 @@ class Power(object):
                     dBm = dBm.replace('dBm', '')
             except AttributeError:
                 pass
-            self.dBm = Decimal(dBm, context).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
+            if isinstance(dBm, Power):
+                self.dBm = dBm.dBm
+            else:
+                self.dBm = Decimal(dBm, context).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
 
     def mwatt(self):
         if self.dBm is None:
