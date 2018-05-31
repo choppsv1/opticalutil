@@ -123,6 +123,20 @@ class Decibel(object):
     def __float__(self):
         return float(self.dB)
 
+    def __format__(self, format_spec):  # pylint: disable=W0221
+        """
+        >>> "{:+2.2f}".format(Decibal(100))
+        '+100.00'
+        >>> "{:+2.2f}".format(Decibal(0))
+        '+0.00'
+        >>> "{:+2.2f}".format(Decibal(None))
+        '*null*'
+        """
+        if self.dB is None:
+            # XXX really want to format this.
+            return "*null*"
+        return self.dB.__format__(format_spec)
+
     def __str__(self):  # pylint: disable=W0222
         """
         >>> str(Decibel(0))
@@ -316,6 +330,14 @@ class Power(object):
         return rv
 
     def __format__(self, format_spec):  # pylint: disable=W0221
+        """
+        >>> "{:+2.2f}".format(Power(100))
+        '+100.00'
+        >>> "{:+2.2f}".format(Power(0))
+        '+0.00'
+        >>> "{:+2.2f}".format(Power(None))
+        '*null*'
+        """
         if self.dBm is None:
             # XXX really want to format this.
             return "*null*"
