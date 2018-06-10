@@ -61,6 +61,7 @@ def combiner(thrupower, tappower, thrupct, firsttap):
     return Power.from_mwatt(wthruout + wtapout)
 
 
+@total_ordering
 class Decibel(object):
     @classmethod
     def from_factor(cls, gain_factor, context=pcontext):
@@ -164,6 +165,18 @@ class Decibel(object):
             return Decibel(None)
         return Decibel(self.dB.__neg__())
 
+    def __add__(self, add_atten):  # pylint: disable=W0221
+        """
+        >>> Decibel(1) + Decibel(3)
+        Decibel('4.000000')
+        >>> Decibel(-1) + 3
+        Decibel('2.000000')
+        """
+        if hasattr(add_atten, "dB"):
+            return Decibel(self.dB + add_atten.dB)
+        else:
+            return Decibel(self.dB + add_atten)
+
     def __mul__(self, other):  # pylint: disable=W0222
         """
         >>> Decibel(.5) * 20
@@ -176,6 +189,56 @@ class Decibel(object):
         return Decibel(self.dB * other)
 
     __rmul__ = __mul__
+
+    def __lt__(self, other):
+        """
+        >>> Gain(0) > Gain(.1)
+        False
+        >>> Gain(.1) > Gain(0)
+        True
+        >>> Gain(0) < Gain(.1)
+        True
+        >>> Gain(.1) < Gain(0)
+        False
+        >>> Gain(0) == Gain(0)
+        True
+        >>> Gain(.1) == Gain(.1)
+        True
+        >>> Gain(0) != Gain(None)
+        True
+        >>> Gain(0) == Gain(None)
+        False
+        >>> Gain(None) == Gain(None)
+        True
+        >>> Gain(None) >= Gain(-50)
+        False
+        >>> Gain(None) < Gain(-50)
+        True
+        >>> Gain(None) <= Gain(-50)
+        True
+        """
+        if self.dB is None:
+            if other is None:
+                return False
+            if hasattr(other, "dB") and other.dB is None:
+                return False
+            # other is not None so it's greater
+            return True
+        elif other is None or (hasattr(other, "dB") and other.dB is None):
+            # self is not None other is so False
+            return False
+        return float(self) < float(other)
+
+    def __eq__(self, other):
+        if self.dB is None:
+            if other is None:
+                return True
+            if hasattr(other, "dB") and other.dB is None:
+                return True
+            return False
+        elif other is None or (hasattr(other, "dB") and other.dB is None):
+            return self.dB is None
+        return float(self) == float(other)
 
     def gain_factor(self):
         """Convert gain value to mwatt for multiplying
