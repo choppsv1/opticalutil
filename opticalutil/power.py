@@ -81,9 +81,9 @@ class Decibel(object):
         '2.20'
         >>> dB = Decibel.from_10ths_db(None)
         >>> str(dB)
-        '*'
+        'None'
         """
-        if inval is None:
+        if inval is None or inval == "None":
             dB = None
         else:
             dB = Decibel(inval).dB / D(10)
@@ -97,16 +97,16 @@ class Decibel(object):
         '2.02'
         >>> dB = Decibel.from_10ths_db(None)
         >>> str(dB)
-        '*'
+        'None'
         """
-        if inval is None:
+        if inval is None or inval == "None":
             dB = None
         else:
             dB = D(inval) / D(100)
         return cls(dB)
 
     def __init__(self, dB):
-        if dB is None:
+        if dB is None or dB == "None":
             self.dB = None
         else:
             try:
@@ -119,6 +119,18 @@ class Decibel(object):
                 self.dB = Decimal(dB).quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
 
     def __repr__(self):
+        """
+        >>> Decibel(1)
+        Decibel('1.000000')
+        >>> Decibel(.01)
+        Decibel('0.010000')
+        >>> Decibel(None)
+        Decibel(None)
+        >>> Decibel("None")
+        Decibel(None)
+        """
+        if self.dB is None:
+            return "Decibel(None)"
         return "Decibel('{}')".format(self.dB)
 
     def __float__(self):
@@ -131,11 +143,11 @@ class Decibel(object):
         >>> str("{:+2.2f}".format(Decibal(0)))
         '+0.00'
         >>> str("{:+2.2f}".format(Decibal(None)))
-        '*null*'
+        'None'
         """
         if self.dB is None:
             # XXX really want to format this.
-            return "*null*"
+            return "None"
         return self.dB.__format__(format_spec)
 
     def __str__(self):  # pylint: disable=W0222
@@ -147,10 +159,10 @@ class Decibel(object):
         >>> str(Decibel(-3.999))
         '-4.00'
         >>> str(Decibel(None))
-        '*'
+        'None'
         """
         if self.dB is None:
-            return "*"
+            return "None"
         else:
             return "{:.2f}".format(self.dB)
 
@@ -399,11 +411,10 @@ class Power(object):
         >>> str("{:+2.2f}".format(Power(0)))
         '+0.00'
         >>> str("{:+2.2f}".format(Power(None)))
-        '*null*'
+        'None'
         """
         if self.dBm is None:
-            # XXX really want to format this.
-            return "*null*"
+            return "None"
         return self.dBm.__format__(format_spec)
 
     def __bool__(self):
@@ -484,6 +495,12 @@ class Power(object):
         """
         >>> Power(0)
         Power('0.000000')
+        >>> Power(.01)
+        Power('0.010000')
+        >>> Power(None)
+        Power(None)
+        >>> Power("None")
+        Power(None)
         """
         if self.dBm is None:
             return "Power(None)"
@@ -495,7 +512,7 @@ class Power(object):
         '0.00'
         """
         if self.dBm is None:
-            return "*"
+            return "None"
         else:
             return "{:.2f}".format(self.dBm)
 
