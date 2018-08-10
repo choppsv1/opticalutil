@@ -230,27 +230,27 @@ class Decibel(object):
         True
         """
         if self.dB is None:
-            if other is None:
+            if other is None or other == "None":
                 return False
             if hasattr(other, "dB") and other.dB is None:
                 return False
             # other is not None so it's greater
             return True
-        elif other is None or (hasattr(other, "dB") and other.dB is None):
+        elif other is None or other == "None" or (hasattr(other, "dB") and other.dB is None):
             # self is not None other is so False
             return False
-        return float(self) < float(other)
+        return float(self.dB) < float(other)
 
     def __eq__(self, other):
         if self.dB is None:
-            if other is None:
+            if other is None or other == "None":
                 return True
             if hasattr(other, "dB") and other.dB is None:
                 return True
             return False
-        elif other is None or (hasattr(other, "dB") and other.dB is None):
+        elif other is None or other == "None" or (hasattr(other, "dB") and other.dB is None):
             return self.dB is None
-        return float(self) == float(other)
+        return float(self.dB) == float(other)
 
     def gain_factor(self):
         """Convert gain value to mwatt for multiplying
