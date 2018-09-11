@@ -488,9 +488,6 @@ class Power(object):
         except AttributeError:
             return mwatt == Power(D(other)).mwatt()
 
-    def __mult__(self, multiplier):
-        return Power.from_mwatt(self.mwatt() * multiplier)
-
     def __repr__(self):
         """
         >>> Power(0)
@@ -541,8 +538,8 @@ class Power(object):
         """
         return Power.from_mwatt(self.mwatt() / divisor)
 
-    def __mul__(self, unused):  # pylint: disable=W0221
-        raise TypeError("Cannot multiply power values")
+    def __mul__(self, multiplier):
+        return Power.from_mwatt(self.mwatt() * multiplier)
 
     def __or__(self, other):
         """

@@ -108,6 +108,30 @@ def channel_to_frequency(itu_channel):
     return int(193100 + 50 * itu_channel)
 
 
+def alu_snmp_wavelen_to_frequency(snmpval):
+    """Covnert tmnxPortTransceiverLaserWaveLen value to frequency
+    >>> alu_snmp_wavelen_to_frequency(0)
+    >>> alu_snmp_wavelen_to_frequency(1577)
+    190100
+    >>> alu_snmp_wavelen_to_frequency(1561420)
+    192000
+    >>> alu_snmp_wavelen_to_frequency(1549320)
+    193500
+    >>> alu_snmp_wavelen_to_frequency(1548910)
+    193550
+    >>> alu_snmp_wavelen_to_frequency(1548710)
+    193575
+    """
+    snmpval = int(snmpval)
+    if snmpval <= 0:
+        return None
+    # Check for integer nanometers
+    if (snmpval <= 2000):
+        return wavelen_to_frequency(float(snmpval))
+    # otherwise integer picometers
+    return wavelen_to_frequency(float(snmpval) / 1000)
+
+
 def wavelen_to_frequency(wavelen):
     """Convert a wavelength to a frequency
     >>> wavelen_to_frequency(1577.03)
