@@ -166,6 +166,14 @@ class Decibel(object):
         else:
             return "{:.2f}".format(self.dB)
 
+    def __abs__(self):
+        if self.dB is None:
+            return Decibel(None)
+        elif self.dB < 0:
+            return Decibel(self.dB.__neg__())
+        else:
+            return Decibel(self.dB)
+
     def __neg__(self):  # pylint: disable=W0222
         """
         >>> str(-Decibel(1))
@@ -188,6 +196,18 @@ class Decibel(object):
             return Decibel(self.dB + add_atten.dB)
         else:
             return Decibel(self.dB + add_atten)
+
+    def __sub__(self, sub_atten):  # pylint: disable=W0221
+        """
+        >>> Decibel(1) - Decibel(3)
+        Decibel('-2.000000')
+        >>> Decibel(2) - 1
+        Decibel('1.000000')
+        """
+        if hasattr(sub_atten, "dB"):
+            return Decibel(self.dB - sub_atten.dB)
+        else:
+            return Decibel(self.dB - sub_atten)
 
     def __mul__(self, other):  # pylint: disable=W0222
         """
@@ -284,7 +304,7 @@ class Decibel(object):
         v = D('1.93e+14')  # speed of light
         h = D('6.63e-34')  # planck's constant
         nf = db2mwatt(nf)  # convert noise figure from dB to mwatts
-        ase_watts = nf * B0 * h * v * (self.mwatt_ratio() - 1)
+        ase_watts = D(nf) * B0 * h * v * (self.mwatt_ratio() - 1)
         return Power.from_mwatt(ase_watts * 1000)
 
     def osnr(self, nf, powerin):
@@ -474,7 +494,25 @@ class Power(object):
         True
         >>> Power(None) <= Power(-50)
         True
+        >>> Power(0) == None
+        False
+        >>> Power(None) == None
+        True
+        >>> Power(0) != None
+        True
+        >>> Power(None) == None
+        True
+        >>> Power(0) is None
+        False
+        >>> Power(None) is None
+        False
+        >>> Power(0) is not None
+        True
+        >>> Power(None) is not None
+        True
         """
+        if other is None:
+            return False
         mwatt = self.mwatt()
         try:
             return mwatt < other.mwatt()
@@ -482,6 +520,8 @@ class Power(object):
             return mwatt < Power(D(other)).mwatt()
 
     def __eq__(self, other):
+        if other is None:
+            return self.dBm is None
         mwatt = self.mwatt()
         try:
             return mwatt == other.mwatt()
