@@ -18,6 +18,7 @@
 # limitations under the License.
 #
 from __future__ import absolute_import, division, unicode_literals, print_function, nested_scopes
+import sys
 from functools import total_ordering
 from decimal import Context, Decimal, ROUND_HALF_EVEN
 
@@ -59,6 +60,13 @@ def combiner(thrupower, tappower, thrupct, firsttap):
     wtapout = (tappower - Gain(.5)).mwatt() * D((1 - thrupct) / 2)
 
     return Power.from_mwatt(wthruout + wtapout)
+
+
+def is_str(s):
+    if sys.version_info >= (3, 0):
+        return isinstance(s, str)
+    else:
+        return isinstance(s, basestring)
 
 
 @total_ordering
@@ -106,7 +114,7 @@ class Decibel(object):
         return cls(dB)
 
     def __init__(self, dB):
-        if dB is None or (isinstance(dB, str) and dB == "None"):
+        if dB is None or (is_str(dB) and dB == "None"):
             self.dB = None
         else:
             try:
@@ -406,7 +414,7 @@ class Power(object):
         >>> Power('None').mwatt()
         0
         """
-        if dBm is None or (isinstance(dBm, str) and dBm == "None"):
+        if dBm is None or (is_str(dBm) and dBm == "None"):
             self.dBm = None
         else:
             try:

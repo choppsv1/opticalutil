@@ -19,7 +19,25 @@
 #
 from __future__ import absolute_import, division, unicode_literals, print_function, nested_scopes
 
+import struct
+import math
 from decimal import Decimal as D
+
+
+def magnitude(x):
+    return 0 if x == 0 else int(math.floor(math.log10(abs(x)))) + 1
+
+
+def round_total_digits(x, digits=7):
+    return round(x, digits - magnitude(x))
+
+
+def ieee32float2decimal(ieee32_float):
+    ibytes = struct.pack('i', int(ieee32_float))
+    return D(str(round_total_digits(struct.unpack('f', ibytes)[0])))
+
+
+ieee32float2float = ieee32float2decimal
 
 
 def channel_itu_to_alu(itu):
