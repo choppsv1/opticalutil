@@ -106,7 +106,7 @@ class Decibel(object):
         return cls(dB)
 
     def __init__(self, dB):
-        if dB is None or dB == "None":
+        if dB is None or (isinstance(dB, str) and dB == "None"):
             self.dB = None
         else:
             try:
@@ -132,6 +132,9 @@ class Decibel(object):
         if self.dB is None:
             return "Decibel(None)"
         return "Decibel('{}')".format(self.dB)
+
+    def __hash__(self):
+        return self.dB.__hash__()
 
     def __float__(self):
         return float(self.dB)
@@ -403,7 +406,7 @@ class Power(object):
         >>> Power('None').mwatt()
         0
         """
-        if dBm is None or dBm == "None":
+        if dBm is None or (isinstance(dBm, str) and dBm == "None"):
             self.dBm = None
         else:
             try:
@@ -423,6 +426,9 @@ class Power(object):
         rv = Decimal(10 ** (self.dBm / 10), pcontext)
         rv = rv.quantize(SIXPLACES, rounding=ROUND_HALF_EVEN)
         return rv
+
+    def __hash__(self):
+        return self.dBm.__hash__()
 
     def __format__(self, format_spec):  # pylint: disable=W0221
         """
@@ -511,6 +517,7 @@ class Power(object):
         >>> Power(None) is not None
         True
         """
+        # Either we are None (not less than) or more than None.
         if other is None:
             return False
         mwatt = self.mwatt()
